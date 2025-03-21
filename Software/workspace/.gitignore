@@ -1,0 +1,26 @@
+# ROS2 build directories
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# VSCode / JetBrains / Other IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Colcon and ROS2-specific files
+.colcon/
+.rosinstall
+ros2_ws/.colcon/
+ros2_ws/.rosinstall
+ros2_ws/.vscode/
+
+# Environment files
+.env
+*.bak
