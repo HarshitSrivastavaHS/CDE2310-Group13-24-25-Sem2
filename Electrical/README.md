@@ -10,4 +10,4 @@
 ![image](https://github.com/user-attachments/assets/a2e77d31-ac5e-45ef-9e9c-d4dd6226e882)
 
 >[!Note]
->The gerber files can be found at PCB schematic v36_2025-03-21.zip
+>The gerber files can be found at ![PCB schematic v36_2025-03-21.zip](Electrical/PCB schematic v36_2025-03-21.zip)
