@@ -1,4 +1,4 @@
-# CREDITS TO THE ORIGINAL OWNDER: https://github.com/AniArka/Autonomous-Explorer-and-Mapper-ros2-nav2
+# CREDITS TO THE ORIGINAL OWNER: https://github.com/AniArka/Autonomous-Explorer-and-Mapper-ros2-nav2
 
 
 # Autonomous Explorer Node for Frontier Exploration
