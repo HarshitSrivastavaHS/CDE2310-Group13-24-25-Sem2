@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import interpolate
+from scipy.interpolate import RectBivariateSpline
 import busio
 import board
 import adafruit_amg88xx
@@ -37,13 +37,15 @@ cbar = fig.colorbar(heatmap)
 cbar.set_label('Temperature (°C)')
 
 def interpolate_data(data):
-    """Interpolate the 8x8 grid to a higher resolution."""
-    x = np.linspace(0, GRID_SIZE - 1, GRID_SIZE)
-    y = np.linspace(0, GRID_SIZE - 1, GRID_SIZE)
+    """Interpolate the 8x8 grid to a higher resolution using RectBivariateSpline."""
+    x = np.arange(GRID_SIZE)
+    y = np.arange(GRID_SIZE)
+    spline = RectBivariateSpline(x, y, data)
+
     interp_x = np.linspace(0, GRID_SIZE - 1, INTERPOLATED_SIZE)
     interp_y = np.linspace(0, GRID_SIZE - 1, INTERPOLATED_SIZE)
-    f_interp = interpolate.interp2d(x, y, data, kind='cubic')
-    return f_interp(interp_x, interp_y)
+
+    return spline(interp_x, interp_y)
 
 try:
     while True:
