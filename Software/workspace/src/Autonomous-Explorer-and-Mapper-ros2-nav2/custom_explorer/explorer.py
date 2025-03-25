@@ -136,11 +136,9 @@ class ExplorerNode(Node):
 
         # Detect frontiers
         frontiers = self.find_frontiers(map_array)
-
+        
         if not frontiers:
             self.get_logger().info("No frontiers found. Exploration complete!")
-
-
 
             # self.shutdown_robot()
             return
@@ -150,6 +148,7 @@ class ExplorerNode(Node):
 
         if not chosen_frontier:
             self.get_logger().warning("No frontiers to explore")
+            # self.get_logger().info(frontiers)
             return
 
         # Convert the chosen frontier to world coordinates
