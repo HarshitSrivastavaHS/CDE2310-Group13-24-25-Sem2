@@ -23,6 +23,8 @@ The bill of material can be found at
 <tr><td>1</td><td>PINHD-1X2/90</td><td>PINHD-1X2/90</td><td>1X02/90</td><td>JP1</td><td>PIN HEADER</td><td>Headers</td><td></td><td></td><td>Header-Right Angle-2 Position</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>THT</td><td></td><td>0.100" (2.54mm)</td><td></td><td></td><td></td><td>Headers-Male Pins</td><td></td><td></td><td></td><td>Board to Board or Cable-Unshrouded-Through Hole-Right Angle</td><td></td></tr>
 </table>
 
+- depending of the use case, one may need an extra female 2x20 1.64mm header to act as a connector to raspberry pi.
+
 
 
 ### 3D Model
