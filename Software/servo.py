@@ -33,6 +33,9 @@ try:
     set_angle(105)
     print("moved to 105deg")
 
+    set_angle(180)
+    print("moved to 180deg")
+
 except KeyboardInterrupt:
     print("\nProgram interrupted.")
 
