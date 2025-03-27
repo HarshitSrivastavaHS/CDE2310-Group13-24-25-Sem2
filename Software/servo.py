@@ -30,6 +30,9 @@ try:
     set_angle(45)
     print("Servo moved to 45°")
 
+    set_angle(105)
+    print("moved to 105deg")
+
 except KeyboardInterrupt:
     print("\nProgram interrupted.")
 
