@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 # Define GPIO pin for solenoid plunger
-SOLENOID_PIN = 12  
+SOLENOID_PIN = 20  
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
