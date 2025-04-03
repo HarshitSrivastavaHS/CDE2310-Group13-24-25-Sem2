@@ -1,14 +1,13 @@
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import OccupancyGrid
-from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
-from std_msgs.msg import String
+from std_msgs.msg import Int32
 import numpy as np
 import math
-import tf_transformations
+
 
 class ExplorerNode(Node):
     def __init__(self):
@@ -17,9 +16,8 @@ class ExplorerNode(Node):
 
         # Subscriber to the map topic
         self.map_sub = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
-        self.thermal_sub = self.create_subscription(String, '/thermal_data', self.thermal_callback, 10)  #thermal data
-        self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
-        self.current_orientation = None
+        self.thermal_sub = self.create_subscription(Int32, '/thermal_data', self.thermal_callback, 10)  #thermal data
+
         # Action client for navigation
         self.nav_to_pose_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
@@ -42,12 +40,6 @@ class ExplorerNode(Node):
     def map_callback(self, msg):
         self.map_data = msg
         self.get_logger().info("Map received")
-
-    def odom_callback(self, msg):
-        # Extract quaternion from odometry
-        orientation_q = msg.pose.pose.orientation
-        quat = (orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w)
-        roll, pitch, self.current_yaw = tf_transformations.euler_from_quaternion(quat)
         
     def thermal_callback(self, msg):
         """
@@ -63,32 +55,15 @@ class ExplorerNode(Node):
         else:
             self.heat_source = None
         """
-        self.heat_source = msg.data
+        self.heat_source = 5
 
     def check_heat_source(self):
         """
         Move in the direction of the detected heat source. If no heat source is detected, explore.
         """
-        self.get_logger().info(f"{self.heat_source}")
-        if self.map_data is None:
-            self.get_logger().warning("No map data available")
-            return
-        match(self.heat_source):
-            case "L":
-                self.left_turn()
-            case "R":
-                self.right_turn()
-            case "F": 
-                self.move_forward()
-            case "S":
-                """
-                FIRE THE PING PONG BALLS
-                """
-            case _:
-                self.get_logger().info("No heat source detected, continuing exploration.")
-                self.explore()
-
-        """heat_row, heat_col = self.heat_source  # Assuming (row, col) format
+        if self.heat_source:
+            self.get_logger().info("YAY")
+            """heat_row, heat_col = self.heat_source  # Assuming (row, col) format
             heat_row, heat_col = heat_row - 4, heat_col - 4
             # self.get_logger().info(f"LOL:{heat_col}")
             
@@ -114,125 +89,15 @@ class ExplorerNode(Node):
             # Send the goal and register a callback for the result
             send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
             send_goal_future.add_done_callback(self.goal_response_callback)
-        """
-        
-        # No heat source detected, continue exploring
-        
+            """
+        else:
+            # No heat source detected, continue exploring
+            self.get_logger().info("No heat source detected, continuing exploration.")
+            self.explore()
 
 
-    def move_forward(self):
-        # Get the robot's current position and yaw
-        robot_x, robot_y = self.robot_position  # Update this from your odometry data
-        current_yaw = self.current_yaw  # This is the yaw angle in radians
-    
-        # Set the distance to move forward (e.g., 1 meter)
-        forward_distance = 0.1
-    
-        # Calculate the target position in front of the robot
-        target_x = robot_x + forward_distance * math.cos(current_yaw)
-        target_y = robot_y + forward_distance * math.sin(current_yaw)
-    
-        # Prepare the goal message
-        goal_msg = PoseStamped()
-        goal_msg.header.frame_id = 'map'
-        goal_msg.header.stamp = self.get_clock().now().to_msg()
-        goal_msg.pose.position.x = target_x
-        goal_msg.pose.position.y = target_y
-    
-        # Calculate the orientation (quaternion) to face forward
-        q = tf_transformations.quaternion_from_euler(0, 0, current_yaw)
-        goal_msg.pose.orientation.x = q[0]
-        goal_msg.pose.orientation.y = q[1]
-        goal_msg.pose.orientation.z = q[2]
-        goal_msg.pose.orientation.w = q[3]
-    
-        # Send the navigation goal
-        nav_goal = NavigateToPose.Goal()
-        nav_goal.pose = goal_msg
-    
-        self.get_logger().info(f"Navigating to forward position: x={target_x}, y={target_y}")
-    
-        # Wait for the action server
-        self.nav_to_pose_client.wait_for_server()
-    
-        # Send the goal and register a callback for the result
-        send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
-        send_goal_future.add_done_callback(self.goal_response_callback)
-    
-    def right_turn(self):
-        """
-        Turn the robot 90 degrees to the right.
-        """
-        current_yaw = self.current_yaw
-        new_yaw = current_yaw - math.pi / 2  # Right turn is a -90 degree rotation
 
-        # Normalize the yaw angle to stay within [-pi, pi]
-        new_yaw = (new_yaw + math.pi) % (2 * math.pi) - math.pi
 
-        # Prepare the goal message
-        goal_msg = PoseStamped()
-        goal_msg.header.frame_id = 'map'
-        goal_msg.header.stamp = self.get_clock().now().to_msg()
-        goal_msg.pose.position.x = float(self.robot_position[0])  # Keep the same position
-        goal_msg.pose.position.y = float(self.robot_position[1])  # Keep the same position
-
-        # Calculate the orientation (quaternion) for the new yaw
-        q = tf_transformations.quaternion_from_euler(0, 0, new_yaw)
-        goal_msg.pose.orientation.x = q[0]
-        goal_msg.pose.orientation.y = q[1]
-        goal_msg.pose.orientation.z = q[2]
-        goal_msg.pose.orientation.w = q[3]
-
-        # Send the navigation goal
-        nav_goal = NavigateToPose.Goal()
-        nav_goal.pose = goal_msg
-
-        self.get_logger().info(f"Turning right to new orientation: yaw={new_yaw}")
-
-        # Wait for the action server
-        self.nav_to_pose_client.wait_for_server()
-
-        # Send the goal and register a callback for the result
-        send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
-        send_goal_future.add_done_callback(self.goal_response_callback)
-
-    def left_turn(self):
-        """
-        Turn the robot 90 degrees to the right.
-        """
-        current_yaw = self.current_yaw
-        new_yaw = current_yaw + math.pi / 2  # Right turn is a -90 degree rotation
-
-        # Normalize the yaw angle to stay within [-pi, pi]
-        new_yaw = (new_yaw + math.pi) % (2 * math.pi) - math.pi
-
-        # Prepare the goal message
-        goal_msg = PoseStamped()
-        goal_msg.header.frame_id = 'map'
-        goal_msg.header.stamp = self.get_clock().now().to_msg()
-        goal_msg.pose.position.x = float(self.robot_position[0])  # Keep the same position
-        goal_msg.pose.position.y = float(self.robot_position[1])  # Keep the same position
-
-        # Calculate the orientation (quaternion) for the new yaw
-        q = tf_transformations.quaternion_from_euler(0, 0, new_yaw)
-        goal_msg.pose.orientation.x = q[0]
-        goal_msg.pose.orientation.y = q[1]
-        goal_msg.pose.orientation.z = q[2]
-        goal_msg.pose.orientation.w = q[3]
-
-        # Send the navigation goal
-        nav_goal = NavigateToPose.Goal()
-        nav_goal.pose = goal_msg
-
-        self.get_logger().info(f"Turning right to new orientation: yaw={new_yaw}")
-
-        # Wait for the action server
-        self.nav_to_pose_client.wait_for_server()
-
-        # Send the goal and register a callback for the result
-        send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
-        send_goal_future.add_done_callback(self.goal_response_callback)
-    
     def navigate_to(self, x, y):
         """
         Send navigation goal to Nav2.

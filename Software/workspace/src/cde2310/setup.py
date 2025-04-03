@@ -16,13 +16,17 @@ setup(
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [],
+        'console_scripts': [
+        	'thermal = cde2310.thermal:main',
+        ],
     },
     data_files=[
         # Install launch files
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         # Install configuration files
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
+        ('share/ament_index/resource_index/packages', ['resource/cde2310']),
+        ('share/' + package_name, ['package.xml']),
     ],
 )
 
