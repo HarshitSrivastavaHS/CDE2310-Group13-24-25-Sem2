@@ -1,0 +1,24 @@
+[3.845s] Invoking command in '/home/harshit/CDE2310-Group13-24-25-Sem2/Software/workspace/src/Autonomous-Explorer-and-Mapper-ros2-nav2': CONDA_PROMPT_MODIFIER=(base) PYTHONPATH=/home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/custom_explorer build --build-base /home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/build install --record /home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/install.log --single-version-externally-managed install_data
+[5.104s] running egg_info
+[5.107s] writing ../../../build/custom_explorer/custom_explorer.egg-info/PKG-INFO
+[5.107s] writing dependency_links to ../../../build/custom_explorer/custom_explorer.egg-info/dependency_links.txt
+[5.107s] writing entry points to ../../../build/custom_explorer/custom_explorer.egg-info/entry_points.txt
+[5.108s] writing requirements to ../../../build/custom_explorer/custom_explorer.egg-info/requires.txt
+[5.115s] writing top-level names to ../../../build/custom_explorer/custom_explorer.egg-info/top_level.txt
+[5.115s] reading manifest file '../../../build/custom_explorer/custom_explorer.egg-info/SOURCES.txt'
+[5.120s] writing manifest file '../../../build/custom_explorer/custom_explorer.egg-info/SOURCES.txt'
+[5.121s] running build
+[5.121s] running build_py
+[5.121s] copying custom_explorer/explorer.py -> /home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/build/lib/custom_explorer
+[5.125s] running install
+[5.125s] running install_lib
+[5.129s] copying /home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/build/lib/custom_explorer/explorer.py -> /home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/python3.10/site-packages/custom_explorer
+[5.130s] byte-compiling /home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/python3.10/site-packages/custom_explorer/explorer.py to explorer.cpython-310.pyc
+[5.134s] running install_data
+[5.135s] running install_egg_info
+[5.144s] removing '/home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/python3.10/site-packages/custom_explorer-0.0.0-py3.10.egg-info' (and everything under it)
+[5.144s] Copying ../../../build/custom_explorer/custom_explorer.egg-info to /home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/python3.10/site-packages/custom_explorer-0.0.0-py3.10.egg-info
+[5.145s] running install_scripts
+[5.221s] Installing explorer script to /home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/custom_explorer
+[5.223s] writing list of installed files to '/home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/install.log'
+[5.298s] Invoked command in '/home/harshit/CDE2310-Group13-24-25-Sem2/Software/workspace/src/Autonomous-Explorer-and-Mapper-ros2-nav2' returned '0': CONDA_PROMPT_MODIFIER=(base) PYTHONPATH=/home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/harshit/CDE2310-Group13-24-25-Sem2/Software/install/custom_explorer/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/custom_explorer build --build-base /home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/build install --record /home/harshit/CDE2310-Group13-24-25-Sem2/Software/build/custom_explorer/install.log --single-version-externally-managed install_data
