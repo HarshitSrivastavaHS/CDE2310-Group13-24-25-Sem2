@@ -45,6 +45,9 @@ class ExplorerNode(Node):
 
     def odom_callback(self, msg):
         # Extract quaternion from odometry
+        position = msg.pose.pose.position
+        self.robot_position = (position.x, position.y)
+
         orientation_q = msg.pose.pose.orientation
         quat = (orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w)
         roll, pitch, self.current_yaw = tf_transformations.euler_from_quaternion(quat)
@@ -69,21 +72,36 @@ class ExplorerNode(Node):
         """
         Move in the direction of the detected heat source. If no heat source is detected, explore.
         """
+        if self.heat_source is None:
+            self.get_logger().info("Heat source is empty.")
+            self.explore()
+            return
+
+
         self.get_logger().info(f"{self.heat_source}")
         if self.map_data is None:
             self.get_logger().warning("No map data available")
             return
-        match(self.heat_source):
+
+        match(self.heat_source[0]):
             case "L":
                 self.left_turn()
             case "R":
                 self.right_turn()
-            case "F": 
-                self.move_forward()
+            case "F":
+                x, y = self.getCoordinates(self.heat_source[1:])
+                result = any(math.sqrt((x - x1)**2 + (y - y1)**2) < 0.15 for (x1, y1) in self.visited_heat_sources) 
+                if result:
+                    self.get_logger().info("Already visited heat source")
+                    self.explore()
+                else:
+                    self.move_forward(self.heat_source[1:])
+                
             case "S":
                 """
                 FIRE THE PING PONG BALLS
                 """
+                self.visited_heat_sources.append(self.robot_position)
             case _:
                 self.get_logger().info("No heat source detected, continuing exploration.")
                 self.explore()
@@ -118,19 +136,24 @@ class ExplorerNode(Node):
         
         # No heat source detected, continue exploring
         
+    def getForwardDistance(self, pixels):
 
+        return 0.1
 
-    def move_forward(self):
-        # Get the robot's current position and yaw
+    def getCoordinates(self, pixels):
         robot_x, robot_y = self.robot_position  # Update this from your odometry data
         current_yaw = self.current_yaw  # This is the yaw angle in radians
     
         # Set the distance to move forward (e.g., 1 meter)
-        forward_distance = 0.1
+        forward_distance = self.getForwardDistance(int(pixels))
     
         # Calculate the target position in front of the robot
         target_x = robot_x + forward_distance * math.cos(current_yaw)
         target_y = robot_y + forward_distance * math.sin(current_yaw)
+        return (target_x, target_y)
+
+    def move_forward(self, pixels):
+        target_x, target_y = self.getCoordinates(pixels)
     
         # Prepare the goal message
         goal_msg = PoseStamped()

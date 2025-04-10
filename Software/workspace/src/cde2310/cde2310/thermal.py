@@ -44,16 +44,16 @@ class ThermalPublisher(Node):
         # Count the number of pixels above threshold
         above_threshold = sum(1 for row in sensor_data for pixel in row if pixel > threshold)
         
+        # Calculate number of high dots on the left, right, and center
+        total_pixels = len(sensor_data) * len(sensor_data[0])
         # Check if all are below the threshold
-        if above_threshold == 0:
+        if above_threshold < 0.05*total_pixels:
             return "N"  # All dots are below threshold
         
         # Check if more than 70% of dots are above threshold
-        total_pixels = len(sensor_data) * len(sensor_data[0])
         if above_threshold > 0.7 * total_pixels:
             return "S"  # More than 70% are above threshold
         
-        # Calculate number of high dots on the left, right, and center
         left_count = sum(1 for row in sensor_data for i in range(4) if row[i] > threshold)  # Left half
         right_count = sum(1 for row in sensor_data for i in range(4, 8) if row[i] > threshold)  # Right half
         center_count = sum(1 for row in sensor_data for i in range(2, 6) if row[i] > threshold)  # Center
@@ -64,7 +64,7 @@ class ThermalPublisher(Node):
         elif right_count > left_count and right_count > center_count:
             return "R"  # More high dots on the right
         else:
-            return "F"  # Otherwise, assume it's going straight
+            return "F"+str(total_pixels)  # Otherwise, assume it's going straight
 
 
 def main(args=None):
