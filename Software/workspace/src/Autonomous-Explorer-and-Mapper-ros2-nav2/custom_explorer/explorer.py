@@ -86,9 +86,10 @@ class ExplorerNode(Node):
         self.heat_source = msg.data
 
     def startFiring(self):
-        self.pwm.ChangeDutyCycle(20)
-        time.sleep(2)
-        self.pwm.ChangeDutyCycle(0)
+        for i in range(0,3):
+            self.pwm.ChangeDutyCycle(20)
+            time.sleep(3)
+            self.pwm.ChangeDutyCycle(0)
 
 
     def check_heat_source(self):
@@ -161,8 +162,7 @@ class ExplorerNode(Node):
         # No heat source detected, continue exploring
         
     def getForwardDistance(self, pixels):
-
-        return 0.1
+        return 0.1 
 
     def getCoordinates(self, pixels):
         robot_x, robot_y = self.robot_position  # Update this from your odometry data
