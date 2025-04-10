@@ -9,6 +9,9 @@ from std_msgs.msg import String
 import numpy as np
 import math
 import tf_transformations
+import RPi.GPIO as GPIO
+import time
+
 
 class ExplorerNode(Node):
     def __init__(self):
@@ -28,6 +31,20 @@ class ExplorerNode(Node):
         self.visited_heat_sources = []
         
         self.followingHeat = None
+
+        GPIO.setmode(GPIO.BCM)
+
+        # Set GPIO pin 18 as output
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.setup(17, GPIO.OUT)
+        GPIO.setup(27, GPIO.OUT)
+        GPIO.output(17, GPIO.HIGH)
+        GPIO.output(27, GPIO.LOW)
+
+        # Set up PWM on pin 18 with a frequency of 100Hz
+        self.pwm = GPIO.PWM(18, 100)  # 100Hz frequency
+        self.pwm.start(0)  # Start PWM with a 0% duty cycle (off)
+
                 
         self.heat_source = None  # Latest detected heat location
         self.heat_threshold = 0.5  # Min distance to avoid revisiting (meters)
@@ -68,6 +85,12 @@ class ExplorerNode(Node):
         """
         self.heat_source = msg.data
 
+    def startFiring(self):
+        self.pwm.ChangeDutyCycle(20)
+        time.sleep(2)
+        self.pwm.ChangeDutyCycle(0)
+
+
     def check_heat_source(self):
         """
         Move in the direction of the detected heat source. If no heat source is detected, explore.
@@ -101,6 +124,7 @@ class ExplorerNode(Node):
                 """
                 FIRE THE PING PONG BALLS
                 """
+                self.startFiring(self)
                 self.visited_heat_sources.append(self.robot_position)
             case _:
                 self.get_logger().info("No heat source detected, continuing exploration.")
