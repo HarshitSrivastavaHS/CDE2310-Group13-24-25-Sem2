@@ -1,17 +1,31 @@
 import RPi.GPIO as GPIO
 import time
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.OUT)
-GPIO.setup(18, GPIO.OUT)
 
-GPIO.setup(27, GPIO.OUT)
-pwm = GPIO.PWM(18, 1000)
-GPIO.output(17, GPIO.HIGH)
-GPIO.output(27, GPIO.LOW)
-pwm.ChangeDutyCycle(20)
-time.sleep(20)
-pwm.ChangeDutyCycle(0)
-pwm.stop()
-GPIO.cleanup(18)
-GPIO.cleanup(17)
-GPIO.cleanup(27)
+PWM_PIN = 18  # IN1
+GND_PIN = 27  # IN2 (held low)
+FIRE_DURATION = 0.5  # how long to run the motor for each fire
+DUTY_CYCLE = 17  # Approx. 2V out of 12V input
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PWM_PIN, GPIO.OUT)
+GPIO.setup(GND_PIN, GPIO.OUT)
+
+GPIO.output(GND_PIN, GPIO.LOW)
+pwm = GPIO.PWM(PWM_PIN, 1000)  # 1 kHz PWM
+
+def fire():
+    pwm.start(DUTY_CYCLE)
+    time.sleep(FIRE_DURATION)
+    pwm.stop()
+
+try:
+    print("Firing 3 balls")
+    fire()
+    time.sleep(2)
+    fire()
+    time.sleep(4)
+    fire()
+    print("Done")
+finally:
+    pwm.stop()
+    GPIO.cleanup()
