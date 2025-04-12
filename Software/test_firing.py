@@ -4,7 +4,7 @@ import time
 PWM_PIN = 18  # IN1
 GND_PIN = 27  # IN2 (held low)
 FIRE_DURATION = 0.5  # how long to run the motor for each fire
-DUTY_CYCLE = 17  # Approx. 2V out of 12V input
+DUTY_CYCLE = 20  # Approx. 2V out of 12V input
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PWM_PIN, GPIO.OUT)
