@@ -40,11 +40,6 @@ class ExplorerNode(Node):
         GPIO.setup(27, GPIO.OUT)
         GPIO.output(17, GPIO.HIGH)
         GPIO.output(27, GPIO.LOW)
-
-        # Set up PWM on pin 18 with a frequency of 100Hz
-        self.pwm = GPIO.PWM(18, 100)  # 100Hz frequency
-        self.pwm.start(0)  # Start PWM with a 0% duty cycle (off)
-
                 
         self.heat_source = None  # Latest detected heat location
         self.heat_threshold = 0.5  # Min distance to avoid revisiting (meters)
@@ -86,11 +81,14 @@ class ExplorerNode(Node):
         self.heat_source = msg.data
 
     def startFiring(self):
-        for i in range(0,3):
-            self.pwm.ChangeDutyCycle(20)
-            time.sleep(3)
-            self.pwm.ChangeDutyCycle(0)
-
+        GPIO.output(18, GPIO.HIGH)
+        self.get_clock().sleep_for(Duration(seconds=2))
+        GPIO.output(18, GPIO.LOW)
+        self.get_clock().sleep_for(Duration(seconds=2))
+        GPIO.output(18, GPIO.HIGH)
+        self.get_clock().sleep_for(Duration(seconds=4))
+        GPIO.output(18, GPIO.LOW)
+        
 
     def check_heat_source(self):
         """
@@ -125,7 +123,7 @@ class ExplorerNode(Node):
                 """
                 FIRE THE PING PONG BALLS
                 """
-                self.startFiring(self)
+                self.startFiring()
                 self.visited_heat_sources.append(self.robot_position)
             case _:
                 self.get_logger().info("No heat source detected, continuing exploration.")
