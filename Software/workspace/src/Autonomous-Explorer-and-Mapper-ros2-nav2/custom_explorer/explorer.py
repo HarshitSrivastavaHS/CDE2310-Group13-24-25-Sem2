@@ -11,6 +11,7 @@ import math
 import tf_transformations
 import RPi.GPIO as GPIO
 import time
+from rclpy.duration import Duration
 
 
 class ExplorerNode(Node):
@@ -185,7 +186,7 @@ class ExplorerNode(Node):
         goal_msg.pose.position.y = target_y
     
         # Calculate the orientation (quaternion) to face forward
-        q = tf_transformations.quaternion_from_euler(0, 0, current_yaw)
+        q = tf_transformations.quaternion_from_euler(0, 0, self.current_yaw)
         goal_msg.pose.orientation.x = q[0]
         goal_msg.pose.orientation.y = q[1]
         goal_msg.pose.orientation.z = q[2]
@@ -423,5 +424,6 @@ def main(args=None):
     except KeyboardInterrupt:
         explorer_node.get_logger().info("Exploration stopped by user")
     finally:
+        GPIO.cleanup()
         explorer_node.destroy_node()
         rclpy.shutdown()

@@ -59,13 +59,21 @@ class ThermalPublisher(Node):
         center_count = sum(1 for row in sensor_data for i in range(2, 6) if row[i] > threshold)  # Center
         
         # Decide the direction based on high dot positions
+        if center_count > left_count and center_count > right_count:
+           return f"F{center_count}"
+        elif left_count > right_count:
+           return "L"
+        else:
+           return "R"
+           
+        """
         if left_count > right_count and left_count > center_count:
             return "L"  # More high dots on the left
         elif right_count > left_count and right_count > center_count:
             return "R"  # More high dots on the right
         else:
-            return "F"+str(total_pixels)  # Otherwise, assume it's going straight
-
+            return "F"+str(center_count)  # Otherwise, assume it's going straight
+        """
 
 def main(args=None):
     rclpy.init(args=args)

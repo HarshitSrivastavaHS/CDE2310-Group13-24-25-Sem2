@@ -1,3 +1,0 @@
-[console_scripts]
-thermal = cde2310.thermal:main
-
