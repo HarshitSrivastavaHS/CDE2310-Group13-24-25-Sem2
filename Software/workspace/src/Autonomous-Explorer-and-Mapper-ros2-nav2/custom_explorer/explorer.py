@@ -161,7 +161,7 @@ class ExplorerNode(Node):
         # No heat source detected, continue exploring
         
     def getForwardDistance(self, pixels):
-        return 0.1 
+        return 0.8 
 
     def getCoordinates(self, pixels):
         robot_x, robot_y = self.robot_position  # Update this from your odometry data
