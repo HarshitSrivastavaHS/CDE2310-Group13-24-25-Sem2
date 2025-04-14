@@ -51,7 +51,7 @@ class ThermalPublisher(Node):
             return "N"  # All dots are below threshold
         
         # Check if more than 70% of dots are above threshold
-        if above_threshold > 0.7 * total_pixels:
+        if above_threshold >= 0.5 * total_pixels:
             return "S"  # More than 70% are above threshold
         
         left_count = sum(1 for row in sensor_data for i in range(4) if row[i] > threshold)  # Left half
