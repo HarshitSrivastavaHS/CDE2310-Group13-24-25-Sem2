@@ -39,7 +39,7 @@ class ThermalPublisher(Node):
         sensor_data = self.sensor.pixels
         self.get_logger().info(f"{sensor_data}")
         # Set threshold for detecting high dots
-        threshold = 30.0  # Adjust this value based on the sensor's sensitivity
+        threshold = 28.0  # Adjust this value based on the sensor's sensitivity
 
         # Count the number of pixels above threshold
         above_threshold = sum(1 for row in sensor_data for pixel in row if pixel > threshold)
