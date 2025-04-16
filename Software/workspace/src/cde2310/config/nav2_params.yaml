@@ -7,13 +7,13 @@ amcl:
     alpha4: 0.2
     alpha5: 0.2
     base_frame_id: "base_footprint"
-    beam_skip_distance: 0.5
+    beam_skip_distance: 1.0
     beam_skip_error_threshold: 0.9
     beam_skip_threshold: 0.3
     do_beamskip: false
     global_frame_id: "map"
     lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0
+    laser_likelihood_max_dist: 3.5
     laser_max_range: 3.5
     laser_min_range: 0.12
     laser_model_type: "likelihood_field"
@@ -163,8 +163,8 @@ controller_server:
       decel_lim_theta: -3.2
       vx_samples: 20
       vy_samples: 5
-      vtheta_samples: 20
-      sim_time: 1.7
+      vtheta_samples: 40
+      sim_time: 2.0
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.2
@@ -181,7 +181,7 @@ controller_server:
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
       RotateToGoal.scale: 32.0
-      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.slowing_factor: 3.0
       RotateToGoal.lookahead_time: -1.0
 
 local_costmap:
@@ -196,11 +196,11 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      robot_radius: 0.35
+      robot_radius: 0.18
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 2.5
+        cost_scaling_factor: 4.5
         inflation_radius: 0.2
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
@@ -235,7 +235,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: False
-      robot_radius: 0.35
+      robot_radius: 0.18
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -258,7 +258,7 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 2.5
+        cost_scaling_factor: 4.5
         inflation_radius: 0.2
       always_send_full_costmap: True
 
@@ -352,3 +352,16 @@ velocity_smoother:
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
+
+recovery_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 1.0
+    recovery_plugins: ["spin", "backup", "clear"]
+    spin:
+      plugin: "nav2_recoveries/Spin"
+    backup:
+      plugin: "nav2_recoveries/BackUp"
+    clear:
+      plugin: "nav2_recoveries/CostmapClearing"
