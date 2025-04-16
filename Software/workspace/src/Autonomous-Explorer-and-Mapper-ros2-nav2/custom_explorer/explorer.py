@@ -32,6 +32,7 @@ class ExplorerNode(Node):
         self.visited_heat_sources = []
         
         self.followingHeat = None
+        self.exploring = False
 
         GPIO.setmode(GPIO.BCM)
 
@@ -329,6 +330,8 @@ class ExplorerNode(Node):
         """
         try:
             result = future.result().result
+            if (self.exploring)
+                self.exploring = False
             if (self.followingHeat and result):
             	self.visited_heat_sources.append(self.followingHeat)
             	self.followingHeat = None
@@ -384,6 +387,9 @@ class ExplorerNode(Node):
     def explore(self):
         if self.map_data is None:
             self.get_logger().warning("No map data available")
+            return
+        
+        if self.exploring:
             return
 
         # Convert map to numpy array
