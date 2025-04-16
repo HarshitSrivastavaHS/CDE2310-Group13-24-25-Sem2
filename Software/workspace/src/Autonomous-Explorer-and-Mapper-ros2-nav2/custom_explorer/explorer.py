@@ -12,6 +12,7 @@ import tf_transformations
 import RPi.GPIO as GPIO
 import time
 from rclpy.duration import Duration
+from scipy.ndimage import label
 
 
 class ExplorerNode(Node):
