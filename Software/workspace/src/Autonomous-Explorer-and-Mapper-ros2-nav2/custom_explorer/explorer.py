@@ -330,7 +330,7 @@ class ExplorerNode(Node):
         """
         try:
             result = future.result().result
-            if (self.exploring)
+            if self.exploring:
                 self.exploring = False
             if (self.followingHeat and result):
             	self.visited_heat_sources.append(self.followingHeat)
