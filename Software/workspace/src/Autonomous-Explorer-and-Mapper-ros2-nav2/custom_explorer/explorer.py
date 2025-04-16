@@ -166,7 +166,7 @@ class ExplorerNode(Node):
             dist = 0.0
         elif pixels > 8:
             dist = 0.2
-        else
+        else:
             dist = 0.45
         return  dist
 
