@@ -340,6 +340,9 @@ class ExplorerNode(Node):
         """
         Detect frontiers in the occupancy grid map.
         """
+        """
+        OLD KIND OF WORKING CODE
+        
         frontiers = []
         rows, cols = map_array.shape
 
@@ -353,6 +356,32 @@ class ExplorerNode(Node):
                         frontiers.append((r, c))
 
         self.get_logger().info(f"Found {len(frontiers)} frontiers")
+        return frontiers
+        """
+        rows, cols = map_array.shape
+        frontier_mask = np.zeros_like(map_array, dtype=bool)
+
+        # Step 1: Create binary mask of frontier cells
+        for r in range(1, rows - 1):
+            for c in range(1, cols - 1):
+                if map_array[r, c] == 0:
+                    neighborhood = map_array[r-1:r+2, c-1:c+2]
+                    if -1 in neighborhood:
+                        frontier_mask[r, c] = True
+
+        # Step 2: Label connected components
+        labeled, num_features = label(frontier_mask)
+
+        frontiers = []
+        min_area_m2 = 0.01  # 10 cm²
+        min_cells = int(np.ceil(min_area_m2 / (self.map_resolution ** 2)))
+
+        for i in range(1, num_features + 1):
+            indices = np.argwhere(labeled == i)
+            if len(indices) >= min_cells:
+                frontiers.append(indices.tolist())
+
+        self.get_logger().info(f"Found {len(frontiers)} valid frontiers after filtering")
         return frontiers
 
     def choose_frontier(self, frontiers):
