@@ -36,13 +36,7 @@ class ExplorerNode(Node):
         self.current_goal_handle = None
 
         GPIO.setmode(GPIO.BCM)
-
-        # Set GPIO pin 18 as output
-        GPIO.setup(18, GPIO.OUT)
-        GPIO.setup(17, GPIO.OUT)
-        GPIO.setup(27, GPIO.OUT)
-        GPIO.output(17, GPIO.HIGH)
-        GPIO.output(27, GPIO.LOW)
+        GPIO.setup(PWM_PIN, GPIO.OUT)
                 
         self.heat_source = None  # Latest detected heat location
         self.heat_threshold = 0.5  # Min distance to avoid revisiting (meters)
@@ -84,13 +78,29 @@ class ExplorerNode(Node):
         self.heat_source = msg.data
 
     def startFiring(self):
-        GPIO.output(18, GPIO.HIGH)
-        self.get_clock().sleep_for(Duration(seconds=2))
-        GPIO.output(18, GPIO.LOW)
-        self.get_clock().sleep_for(Duration(seconds=2))
-        GPIO.output(18, GPIO.HIGH)
-        self.get_clock().sleep_for(Duration(seconds=4))
-        GPIO.output(18, GPIO.LOW)
+        PWM_PIN = 12        # GPIO pin connected to IN1
+        DUTY_CYCLE = 14     # 20% duty cycle (approx. 2V if input is 12V)
+        FREQUENCY = 1000    # 1 kHz PWM frequency
+        TIME = 2.38
+        FINAL_TIME = TIME + 0.20
+
+
+
+        # Set up PWM
+        pwm = GPIO.PWM(PWM_PIN, FREQUENCY)
+
+        pwm.start(DUTY_CYCLE)
+        time.sleep(TIME)
+        pwm.stop()
+        # time.sleep(0.5)
+        pwm.start(DUTY_CYCLE)
+        time.sleep(TIME)
+        pwm.stop()
+        time.sleep(4-TIME)
+        pwm.start(DUTY_CYCLE)
+        time.sleep(FINAL_TIME)
+        pwm.stop()
+
         
 
     def check_heat_source(self):
@@ -233,6 +243,10 @@ class ExplorerNode(Node):
         """
         Turn the robot 90 degrees to the right.
         """
+        self.left_turn()
+        self.left_turn()
+        self.left_turn()
+        """
         if not self.current_yaw:
             self.get_logger().info(f"Current Yaw not defined")
             return
@@ -269,6 +283,8 @@ class ExplorerNode(Node):
         # Send the goal and register a callback for the result
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
+        """
+
 
     def left_turn(self):
         """
