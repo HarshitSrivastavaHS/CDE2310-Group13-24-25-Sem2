@@ -34,7 +34,7 @@ class ExplorerNode(Node):
         self.followingHeat = None
 
         self.current_goal_handle = None
-
+        PWM_PIN = 12  
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(PWM_PIN, GPIO.OUT)
                 
