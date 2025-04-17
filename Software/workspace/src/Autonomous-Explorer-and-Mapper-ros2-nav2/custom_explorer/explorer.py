@@ -246,10 +246,6 @@ class ExplorerNode(Node):
         """
         Turn the robot 90 degrees to the right.
         """
-        self.left_turn()
-        self.left_turn()
-        self.left_turn()
-        """
         if not self.current_yaw:
             self.get_logger().info(f"Current Yaw not defined")
             return
@@ -258,7 +254,7 @@ class ExplorerNode(Node):
         new_yaw = current_yaw - math.pi / 2   # Right turn is a -90 degree rotation
 
         # Normalize the yaw angle to stay within [-pi, pi]
-        new_yaw = (new_yaw + math.pi) % (2 * math.pi) - math.pi
+        new_yaw = (new_yaw + math.pi) % (2 * math.pi) + math.pi
 
         # Prepare the goal message
         goal_msg = PoseStamped()
@@ -286,7 +282,7 @@ class ExplorerNode(Node):
         # Send the goal and register a callback for the result
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
-        """
+        
 
 
     def left_turn(self):

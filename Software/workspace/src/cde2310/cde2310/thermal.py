@@ -61,8 +61,8 @@ class ThermalPublisher(Node):
         if above_threshold >= 0.5 * total_pixels:
             return "S"  # More than 70% are above threshold
         
-        left_count = sum(1 for row in sensor_data for i in range(4) if row[i] > threshold)  # Left half
-        right_count = sum(1 for row in sensor_data for i in range(4, 8) if row[i] > threshold)  # Right half
+        left_count = sum(1 for row in sensor_data for i in range(2) if row[i] > threshold)  # Left half
+        right_count = sum(1 for row in sensor_data for i in range(6, 8) if row[i] > threshold)  # Right half
         center_count = sum(1 for row in sensor_data for i in range(2, 6) if row[i] > threshold)  # Center
         
         # Decide the direction based on high dot positions
