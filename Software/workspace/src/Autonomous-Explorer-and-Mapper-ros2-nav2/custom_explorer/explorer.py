@@ -34,6 +34,8 @@ class ExplorerNode(Node):
         self.followingHeat = None
         self.exploring = False
 
+        self.current_goal_handle = None
+
         GPIO.setmode(GPIO.BCM)
 
         # Set GPIO pin 18 as output
@@ -106,8 +108,19 @@ class ExplorerNode(Node):
         if self.map_data is None:
             self.get_logger().warning("No map data available")
             return
+        
+        if self.heat_source[0] == "N":
+            self.get_logger().info("No heat source detected, continuing exploration.")
+            self.explore()
+            return
+        
+        if self.exploring:
+            self.current_goal_handle.cancel_goal_async()
+            self.current_goal_handle = None
+            self.exploring = False
 
         match(self.heat_source[0]):
+            
             case "L":
                 self.left_turn()
             case "R":
@@ -127,9 +140,7 @@ class ExplorerNode(Node):
                 """
                 self.startFiring()
                 self.visited_heat_sources.append(self.robot_position)
-            case _:
-                self.get_logger().info("No heat source detected, continuing exploration.")
-                self.explore()
+            
 
         """heat_row, heat_col = self.heat_source  # Assuming (row, col) format
             heat_row, heat_col = heat_row - 4, heat_col - 4
@@ -159,7 +170,6 @@ class ExplorerNode(Node):
             send_goal_future.add_done_callback(self.goal_response_callback)
         """
         
-        # No heat source detected, continue exploring
         
     def getForwardDistance(self, pixels):
         dist = 0
@@ -306,11 +316,13 @@ class ExplorerNode(Node):
         # Wait for the action server
         self.nav_to_pose_client.wait_for_server()
 
+        self.exploring = True
+
         # Send the goal and register a callback for the result
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
 
-    def goal_response_callback(self, future):
+    def goal_response_callback(selself.exploringf, future):
         """
         Handle the goal response and attach a callback to the result.
         """
@@ -318,11 +330,14 @@ class ExplorerNode(Node):
 
         if not goal_handle.accepted:
             self.get_logger().warning("Goal rejected!")
+            self.exploring = False
             return
 
         self.get_logger().info("Goal accepted")
         result_future = goal_handle.get_result_async()
         result_future.add_done_callback(self.navigation_complete_callback)
+        
+        self.current_goal_handle = goal_handle
 
     def navigation_complete_callback(self, future):
         """

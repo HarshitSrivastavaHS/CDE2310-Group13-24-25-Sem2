@@ -35,13 +35,19 @@ class ThermalPublisher(Node):
         self.get_logger().info(f"Published Thermal Data: {msg.data}")
 
     def analyze_sensor_data(self):
-        return "R"
         # Read the sensor data (8x8 array)
         sensor_data = self.sensor.pixels
         self.get_logger().info(f"{sensor_data}")
         # Set threshold for detecting high dots
-        threshold = 28.0  # Adjust this value based on the sensor's sensitivity
-
+        flat_data = [pixel for row in sensor_data for pixel in row]
+    
+        # Calculate average ambient temperature
+        ambient_temp = sum(flat_data) / len(flat_data)
+        temp_diff_threshold = 2.5  # Change this value based on how sensitive you want it to be
+    
+        # Define the dynamic threshold
+        threshold = ambient_temp + temp_diff_threshold
+        
         # Count the number of pixels above threshold
         above_threshold = sum(1 for row in sensor_data for pixel in row if pixel > threshold)
         
