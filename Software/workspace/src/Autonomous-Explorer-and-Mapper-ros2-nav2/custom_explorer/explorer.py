@@ -32,7 +32,6 @@ class ExplorerNode(Node):
         self.visited_heat_sources = []
         
         self.followingHeat = None
-        self.exploring = False
 
         self.current_goal_handle = None
 
@@ -113,17 +112,17 @@ class ExplorerNode(Node):
             self.get_logger().info("No heat source detected, continuing exploration.")
             self.explore()
             return
-        
-        if self.exploring:
-            self.current_goal_handle.cancel_goal_async()
-            self.current_goal_handle = None
-            self.exploring = False
+            
 
         match(self.heat_source[0]):
             
             case "L":
+                self.current_goal_handle.cancel_goal_async()
+                self.current_goal_handle = None
                 self.left_turn()
             case "R":
+                self.current_goal_handle.cancel_goal_async()
+                self.current_goal_handle = None
                 self.right_turn()
             case "F":
                 x, y = self.getCoordinates(self.heat_source[1:])
@@ -132,12 +131,16 @@ class ExplorerNode(Node):
                     self.get_logger().info("Already visited heat source")
                     self.explore()
                 else:
+                    self.current_goal_handle.cancel_goal_async()
+                    self.current_goal_handle = None
                     self.move_forward(self.heat_source[1:])
                 
             case "S":
                 """
                 FIRE THE PING PONG BALLS
                 """
+                self.current_goal_handle.cancel_goal_async()
+                self.current_goal_handle = None
                 self.startFiring()
                 self.visited_heat_sources.append(self.robot_position)
             
@@ -228,7 +231,7 @@ class ExplorerNode(Node):
         Turn the robot 90 degrees to the right.
         """
         current_yaw = self.current_yaw
-        new_yaw = current_yaw    # Right turn is a -90 degree rotation
+        new_yaw = current_yaw - math.pi / 2   # Right turn is a -90 degree rotation
 
         # Normalize the yaw angle to stay within [-pi, pi]
         new_yaw = (new_yaw + math.pi) % (2 * math.pi) - math.pi
@@ -316,7 +319,6 @@ class ExplorerNode(Node):
         # Wait for the action server
         self.nav_to_pose_client.wait_for_server()
 
-        self.exploring = True
 
         # Send the goal and register a callback for the result
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
@@ -330,7 +332,6 @@ class ExplorerNode(Node):
 
         if not goal_handle.accepted:
             self.get_logger().warning("Goal rejected!")
-            self.exploring = False
             return
 
         self.get_logger().info("Goal accepted")
@@ -345,8 +346,6 @@ class ExplorerNode(Node):
         """
         try:
             result = future.result().result
-            if self.exploring:
-                self.exploring = False
             if (self.followingHeat and result):
             	self.visited_heat_sources.append(self.followingHeat)
             	self.followingHeat = None
@@ -402,9 +401,6 @@ class ExplorerNode(Node):
     def explore(self):
         if self.map_data is None:
             self.get_logger().warning("No map data available")
-            return
-        
-        if self.exploring:
             return
 
         # Convert map to numpy array
