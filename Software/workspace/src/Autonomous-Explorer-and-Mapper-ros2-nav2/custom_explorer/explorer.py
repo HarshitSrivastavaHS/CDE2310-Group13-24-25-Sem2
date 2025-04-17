@@ -12,6 +12,8 @@ import tf_transformations
 import RPi.GPIO as GPIO
 import time
 from rclpy.duration import Duration
+from geometry_msgs.msg import Twist
+
 
 
 class ExplorerNode(Node):
@@ -241,10 +243,50 @@ class ExplorerNode(Node):
         # Send the goal and register a callback for the result
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
+
+    
+
+    def turn_right_in_place(self, angle_deg=10, angular_speed_deg=30):
+        """
+        Turn the robot in-place to the right by the specified angle using cmd_vel.
+
+        Args:
+            angle_deg (float): Angle to turn in degrees. Default is 90.
+            angular_speed_deg (float): Angular speed in degrees/sec. Default is 30.
+        """
+
+        # Convert degrees to radians
+        angle_rad = math.radians(angle_deg)
+        angular_speed_rad = math.radians(angular_speed_deg)
+
+        twist_msg = Twist()
+        twist_msg.angular.z = -abs(angular_speed_rad)  # Negative for right turn (clockwise)
+
+        # Compute duration
+        duration = angle_rad / abs(angular_speed_rad)
+
+        # Start publishing
+        pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        start_time = self.get_clock().now().seconds_nanoseconds()[0]
+
+        self.get_logger().info(f"Turning right {angle_deg}° in {duration:.2f} seconds...")
+
+        # Publish for required duration
+        end_time = start_time + duration
+        while self.get_clock().now().seconds_nanoseconds()[0] < end_time:
+        pub.publish(twist_msg)
+        time.sleep(0.05)  # 20Hz
+
+        # Stop movement
+        twist_msg.angular.z = 0.0
+        pub.publish(twist_msg)
+        self.get_logger().info("Turn complete.")
+
     
     def right_turn(self):
         """
         Turn the robot 90 degrees to the right.
+        """
         """
         if not self.current_yaw:
             self.get_logger().info(f"Current Yaw not defined")
@@ -282,7 +324,8 @@ class ExplorerNode(Node):
         # Send the goal and register a callback for the result
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
-        
+        """
+        self.turn_right_in_place()
 
 
     def left_turn(self):
