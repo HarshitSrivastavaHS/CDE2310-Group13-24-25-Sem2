@@ -36,6 +36,7 @@ class ThermalPublisher(Node):
 
     def analyze_sensor_data(self):
         # Read the sensor data (8x8 array)
+        return "R"
         sensor_data = self.sensor.pixels
         self.get_logger().info(f"{sensor_data}")
         # Set threshold for detecting high dots
