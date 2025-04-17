@@ -117,12 +117,14 @@ class ExplorerNode(Node):
         match(self.heat_source[0]):
             
             case "L":
-                self.current_goal_handle.cancel_goal_async()
-                self.current_goal_handle = None
+                if (self.current_goal_handle):
+                    self.current_goal_handle.cancel_goal_async()
+                    self.current_goal_handle = None
                 self.left_turn()
             case "R":
-                self.current_goal_handle.cancel_goal_async()
-                self.current_goal_handle = None
+                if (self.current_goal_handle):
+                    self.current_goal_handle.cancel_goal_async()
+                    self.current_goal_handle = None
                 self.right_turn()
             case "F":
                 x, y = self.getCoordinates(self.heat_source[1:])
@@ -131,8 +133,9 @@ class ExplorerNode(Node):
                     self.get_logger().info("Already visited heat source")
                     self.explore()
                 else:
-                    self.current_goal_handle.cancel_goal_async()
-                    self.current_goal_handle = None
+                    if (self.current_goal_handle):
+                        self.current_goal_handle.cancel_goal_async()
+                        self.current_goal_handle = None
                     self.move_forward(self.heat_source[1:])
                 
             case "S":
