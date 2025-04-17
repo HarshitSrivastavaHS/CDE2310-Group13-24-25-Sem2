@@ -228,7 +228,7 @@ class ExplorerNode(Node):
         Turn the robot 90 degrees to the right.
         """
         current_yaw = self.current_yaw
-        new_yaw = current_yaw - 4 * math.pi   # Right turn is a -90 degree rotation
+        new_yaw = current_yaw    # Right turn is a -90 degree rotation
 
         # Normalize the yaw angle to stay within [-pi, pi]
         new_yaw = (new_yaw + math.pi) % (2 * math.pi) - math.pi
