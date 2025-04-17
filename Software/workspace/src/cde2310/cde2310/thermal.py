@@ -35,6 +35,7 @@ class ThermalPublisher(Node):
         self.get_logger().info(f"Published Thermal Data: {msg.data}")
 
     def analyze_sensor_data(self):
+        return "R"
         # Read the sensor data (8x8 array)
         sensor_data = self.sensor.pixels
         self.get_logger().info(f"{sensor_data}")
