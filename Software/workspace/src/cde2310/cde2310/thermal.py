@@ -35,7 +35,6 @@ class ThermalPublisher(Node):
         self.get_logger().info(f"Published Thermal Data: {msg.data}")
 
     def analyze_sensor_data(self):
-        return "R"
         # Read the sensor data (8x8 array)
         sensor_data = self.sensor.pixels
         self.get_logger().info(f"{sensor_data}")
@@ -62,8 +61,8 @@ class ThermalPublisher(Node):
         if above_threshold >= 0.5 * total_pixels:
             return "S"  # More than 70% are above threshold
         
-        left_count = sum(1 for row in sensor_data for i in range(2) if row[i] > threshold)  # Left half
-        right_count = sum(1 for row in sensor_data for i in range(6, 8) if row[i] > threshold)  # Right half
+        left_count = sum(1 for row in sensor_data for i in range(4) if row[i] > threshold)  # Left half
+        right_count = sum(1 for row in sensor_data for i in range(4, 8) if row[i] > threshold)  # Right half
         center_count = sum(1 for row in sensor_data for i in range(2, 6) if row[i] > threshold)  # Center
         
         # Decide the direction based on high dot positions
