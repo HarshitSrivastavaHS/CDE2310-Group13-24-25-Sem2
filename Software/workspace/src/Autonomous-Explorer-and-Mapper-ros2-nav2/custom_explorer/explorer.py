@@ -274,8 +274,8 @@ class ExplorerNode(Node):
         # Publish for required duration
         end_time = start_time + duration
         while self.get_clock().now().seconds_nanoseconds()[0] < end_time:
-        pub.publish(twist_msg)
-        time.sleep(0.05)  # 20Hz
+            pub.publish(twist_msg)
+            time.sleep(0.05)  # 20Hz
 
         # Stop movement
         twist_msg.angular.z = 0.0
