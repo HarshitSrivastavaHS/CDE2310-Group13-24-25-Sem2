@@ -52,7 +52,7 @@ class ExplorerNode(Node):
         self.robot_position = (0, 0)  # Placeholder, update from localization
 
         # Timer for periodic exploration
-        self.timer = self.create_timer(1.0, self.check_heat_source)
+        self.timer = self.create_timer(5.0, self.check_heat_source)
 
     def map_callback(self, msg):
         self.map_data = msg
