@@ -407,7 +407,7 @@ class ExplorerNode(Node):
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
         """
-        turn_left_in_place()
+        self.turn_left_in_place()
 
     def navigate_to(self, x, y):
         """
