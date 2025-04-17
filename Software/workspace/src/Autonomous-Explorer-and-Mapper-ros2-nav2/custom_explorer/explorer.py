@@ -198,6 +198,9 @@ class ExplorerNode(Node):
         return  dist
 
     def getCoordinates(self, pixels):
+        while not self.current_yaw:
+            """wait"""
+        
         robot_x, robot_y = self.robot_position  # Update this from your odometry data
         current_yaw = self.current_yaw  # This is the yaw angle in radians
     
