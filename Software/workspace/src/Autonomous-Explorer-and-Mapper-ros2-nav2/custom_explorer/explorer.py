@@ -53,7 +53,7 @@ class ExplorerNode(Node):
         self.robot_position = (0, 0)  # Placeholder, update from localization
 
         # Timer for periodic exploration
-        self.timer = self.create_timer(5.0, self.check_heat_source)
+        self.timer = self.create_timer(1.0, self.check_heat_source)
 
     def map_callback(self, msg):
         self.map_data = msg
@@ -228,7 +228,7 @@ class ExplorerNode(Node):
         Turn the robot 90 degrees to the right.
         """
         current_yaw = self.current_yaw
-        new_yaw = current_yaw + math.pi  # Right turn is a -90 degree rotation
+        new_yaw = current_yaw - math.pi / 2  # Right turn is a -90 degree rotation
 
         # Normalize the yaw angle to stay within [-pi, pi]
         new_yaw = (new_yaw + math.pi) % (2 * math.pi) - math.pi
