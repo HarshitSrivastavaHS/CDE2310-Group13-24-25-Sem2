@@ -322,7 +322,7 @@ class ExplorerNode(Node):
         send_goal_future = self.nav_to_pose_client.send_goal_async(nav_goal)
         send_goal_future.add_done_callback(self.goal_response_callback)
 
-    def goal_response_callback(selself.exploringf, future):
+    def goal_response_callback(self, future):
         """
         Handle the goal response and attach a callback to the result.
         """
