@@ -17,6 +17,9 @@ class ThermalPublisher(Node):
         # ROS Publisher
         self.publisher_ = self.create_publisher(String, 'thermal_data', 10)
         
+        self.ambient_initialized = False
+        self.ambient_temp = 0.0
+
         # Timer to publish data every 1 second
         self.timer = self.create_timer(1.0, self.publish_thermal_data)
         
@@ -40,6 +43,12 @@ class ThermalPublisher(Node):
         self.get_logger().info(f"{sensor_data}")
         # Set threshold for detecting high dots
         flat_data = [pixel for row in sensor_data for pixel in row]
+
+        if not self.ambient_initialized:
+            self.ambient_temp = sum(flat_data) / len(flat_data)
+            self.ambient_initialized = True
+            self.get_logger().info(f"Initial ambient temp set: {self.ambient_temp:.2f}°C")
+
     
         # Calculate average ambient temperature
         ambient_temp = sum(flat_data) / len(flat_data)
