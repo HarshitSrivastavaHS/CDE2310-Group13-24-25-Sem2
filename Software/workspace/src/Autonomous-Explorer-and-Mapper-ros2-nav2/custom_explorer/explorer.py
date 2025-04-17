@@ -233,6 +233,10 @@ class ExplorerNode(Node):
         """
         Turn the robot 90 degrees to the right.
         """
+        if not self.current_yaw:
+            self.get_logger().info(f"Current Yaw not defined")
+            return
+
         current_yaw = self.current_yaw
         new_yaw = current_yaw - math.pi / 2   # Right turn is a -90 degree rotation
 
@@ -270,6 +274,12 @@ class ExplorerNode(Node):
         """
         Turn the robot 90 degrees to the right.
         """
+
+
+        if not self.current_yaw:
+            self.get_logger().info(f"Current Yaw not defined")
+            return
+
         current_yaw = self.current_yaw
         new_yaw = current_yaw + math.pi / 2  # Right turn is a -90 degree rotation
 
