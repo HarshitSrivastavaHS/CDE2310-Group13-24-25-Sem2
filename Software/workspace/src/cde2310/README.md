@@ -48,7 +48,8 @@ thermal
 ```
 
 > [!CAUTION]
-> This assumes you have added an alias by following the instructions [here](../../README.md).
+> This assumes you have added an alias by following the instructions [here](../../../README.md).
+
 
 > [!NOTE]
 > Make sure I2C is enabled on your board (e.g., Raspberry Pi).
