@@ -6,6 +6,12 @@ The software runs on **Ubuntu 22.04 (64-bit)** with **ROS2 Humble**, deployed on
 
 ---
 
+## For more details about a node, kindly go to:
+- [`Explorer and Firing/`](./workspace/src/Autonomous-Explorer-and-Mapper-ros2-nav2/)
+- [`Thermal/`](./workspace/src/cde2310/)
+
+---
+
 ## ⚙️ Setup Instructions
 
 These steps will help you replicate the software environment on a fresh Raspberry Pi setup.
@@ -77,7 +83,8 @@ All nodes are written in Python using the `rclpy` client library and structured 
 ## 📂 Folder Structure
 
 - `workspace/` — ROS2 workspace (nodes live in `src/`)
-- Other Files — Some Test files written during development and testing.
+- `test` — Some Test files written during development and testing.
+- `images` — Some static image files for the readme
 
 ---
 
@@ -114,5 +121,11 @@ Each module was individually tested and passed. However, due to time constraints
 - Final demo attempt failed due to lack of smooth integration (our bad 😔).
 
 Future improvements would include using a centralized state machine or ROS2 behavior trees to manage transitions between exploring, detecting, aligning, and firing.
+
+---
+
+## RQT Graph of the setup
+
+![RQT](./images/rqt.png?raw=true)
 
 ---
