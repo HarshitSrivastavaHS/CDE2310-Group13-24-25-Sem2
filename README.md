@@ -6,13 +6,13 @@ The system was developed on the TurtleBot3 Burger platform, integrating mechanic
 
 ---
 
-## System Overview
+## 🧩 System Overview
 
 The robot autonomously locates **two heat sources**, simulating trapped humans, and activates a mechanical actuator to launch a flare at each source. It avoids revisiting previously detected targets and explores until both are found.
 
 ---
 
-## Mechanical Subsystem
+## 🛠 Mechanical Subsystem
 
 A custom **cam-cantilever-spring mechanism** forms the core of the actuator, which launches a ping pong ball upon confirmation of a heat source.
 
@@ -20,11 +20,11 @@ A custom **cam-cantilever-spring mechanism** forms the core of the actuator, whi
 - **Stroke**: 14 mm  
 - **Actuation**: Driven by a motor with gearbox
 
-Refer to the [`mechanical/`](./mechanical/) directory for design files and CAD models.
+🔗 Refer to the [`Mechanical/`](./Mechanical/) directory for design files and CAD models.
 
 ---
 
-## Electrical Subsystem
+## ⚡ Electrical Subsystem
 
 The electrical architecture is built around a **custom-designed PCB** mounted on the Raspberry Pi, ensuring robust connectivity and easier integration of power and signal lines.
 
@@ -33,11 +33,11 @@ The electrical architecture is built around a **custom-designed PCB** mounted on
 - **Testing**: JLCPCB performed electrical tests; assembly and validation were done at E2 Electronics Lab  
 - **Note**: GPIO pin 24 was intentionally left unused due to a layout issue
 
-All schematics, BOMs, and datasheets are available in the [`electrical/`](./electrical/) folder.
+📁 All schematics, BOMs, and datasheets are available in the [`Electrical/`](./Electrical/) folder.
 
 ---
 
-## Software Subsystem
+## 💻 Software Subsystem
 
 The software is implemented using **ROS2 Humble**, running on a Raspberry Pi. It integrates exploration, navigation, thermal detection, and actuator control.
 
@@ -48,19 +48,11 @@ The software is implemented using **ROS2 Humble**, running on a Raspberry Pi. It
 - **Heat Source Detection**: AMG8833 thermal sensor, processed with thresholding  
 - **Flare Deployment**: GPIO control of actuator once source is confirmed
 
-Full implementation, test scripts, and configuration are located in the [`software/`](./software/) directory.
+📂 Full implementation, test scripts, and configuration are located in the [`Software/`](./Software/) directory.
 
 ---
 
-## Testing & Integration
-
-- Integrated system was tested in a controlled environment  
-- PCB validation, sensor communication, and actuator firing were verified independently before full integration  
-- Software stack was tested with both real-time inputs and simulated data
-
----
-
-## Team
+## 👥 Team
 
 - Srivastava Harshit
 - Wong Jian Bin
