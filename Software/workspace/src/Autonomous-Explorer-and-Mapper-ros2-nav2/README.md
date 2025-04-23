@@ -1,137 +1,74 @@
-# CREDITS TO THE ORIGINAL OWNER: https://github.com/AniArka/Autonomous-Explorer-and-Mapper-ros2-nav2
+**Explorer Node Overview**
 
+This code implements a ROS2 (Robot Operating System) node that enables a robot to autonomously explore its environment using a thermal sensor (simulated here) and navigate based on detected heat sources. It subscribes to various topics such as the map, odometry, and thermal sensor data, and publishes commands to control the robot's movement.
 
-# Autonomous Explorer Node for Frontier Exploration
+**Key Functionalities:**
 
-This repository contains a ROS 2 package implementing an autonomous frontier exploration algorithm using Nav2. The Explorer Node subscribes to a map, detects frontiers, and sends navigation goals to explore the environment.
+1. **Map and Odometry Handling:**
+    - Subscribes to /map for the robot’s environment map (OccupancyGrid).
+    - Subscribes to /odom for the robot's current position and orientation (Odometry).
+2. **Thermal Sensor Integration:**
+    - Subscribes to /thermal_data for thermal sensor readings.
+    - Identifies heat sources and makes decisions based on their locations.
+3. **Autonomous Navigation:**
+    - Uses an action client (NavigateToPose) to navigate to specific positions.
+    - Based on thermal data, the robot moves towards detected heat sources, avoids revisiting them, and can perform specific tasks like firing a projectile at heat sources.
 
----
+**Important Methods:**
 
-## Features
+**1\. map_callback(msg)**
 
-- **Frontier Detection**: Automatically detects frontiers (unknown areas) in the map.
-- **Autonomous Navigation**: Uses Nav2's `NavigateToPose` action to navigate to frontiers.
-- **Dynamic Goal Selection**: Chooses the closest unexplored frontier for efficient exploration.
-- **ROS 2-Based**: Compatible with ROS 2 (tested on Humble or Foxy distribution).
-- **Customizable Timer**: Adjust the exploration frequency as needed.
+- **Purpose:** This method receives the environment map (OccupancyGrid) and stores it in the map_data attribute. The map is used later for navigation and exploration.
 
----
+**2\. odom_callback(msg)**
 
-## Requirements
+- **Purpose:** This method processes the robot's position and orientation (odometry data). It extracts the robot's current coordinates and orientation (in radians) using a quaternion-to-Euler conversion.
 
-- ROS 2 (Humble/Foxy)
-- Python 3
-- TurtleBot3 packages installed
-- Nav2 installed and configured for your robot
-- SLAM Toolbox installed
-- `numpy` Python library
+**3\. thermal_callback(msg)**
 
----
+- **Purpose:** Receives thermal data from the thermal sensor. The sensor data would be used to identify the location of heat sources. 
 
-## Setup
+**4\. check_heat_source()**
 
-1. Clone the repository into your ROS 2 workspace:
+- **Purpose:** This method is periodically triggered by a timer. It checks if a heat source has been detected:
+  - If no heat source is detected, it calls self.explore() to continue searching.
+  - If a heat source is found, it evaluates the type of action needed based on the heat source's characteristics (e.g., move forward, turn, or fire a projectile).
 
-    ```bash
-    cd ~/ros2_ws/src
-    git clone https://github.com/AniArka/Autonomous-Explorer-and-Mapper-ros2-nav2.git
-    cd ~/ros2_ws
-    colcon build
-    ```
+**5\. startFiring()**
 
-2. Install dependencies:
+- **Purpose:** This function controls a PWM pin on a Raspberry Pi to simulate firing a flare (a ping pong ball) when a heat source is detected. The firing time is controlled by the PWM_PIN and DUTY_CYCLE parameters.
 
-    ```bash
-    pip install numpy
-    ```
+**6\. move_forward(pixels)**
 
-3. Source the workspace:
+- **Purpose:** This function computes the target coordinates (target_x, target_y) based on the current robot position and the desired forward distance (calculated from thermal data). It then sends a navigation goal to move the robot towards those coordinates using the NavigateToPose action.
 
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ```
+**7\. turn_left_in_place() and turn_right_in_place()**
 
----
+- **Purpose:** These methods control the robot’s in-place rotation using the cmd_vel topic. The robot turns a specified number of degrees (default 10°) either to the left or right by publishing angular velocity commands.
 
-## Testing with TurtleBot3
+**Other Key Features:**
 
-Follow these steps to test the Explorer Node with TurtleBot3 in a Gazebo simulation:
+- **PWM Control for Firing Mechanism:** The startFiring method demonstrates controlling a firing mechanism via PWM on the Raspberry Pi's GPIO pin. This action is triggered when a specific type of heat source is detected.
+- **Exploration and Heat Source Handling:** The robot follows basic rules for detecting and responding to heat sources:
+  - If the heat source is a "L" (left turn), it will turn left.
+  - If it's "R" (right turn), the robot turns right.
+  - If it's "F" (forward), the robot moves forward towards the heat source if it hasn't already visited it.
+  - If the heat source is "S" (fire), it activates the firing mechanism.
 
-1. Launch the TurtleBot3 world in Gazebo:
+**Navigation Control:**
 
-    ```bash
-    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-    ```
+- The NavigateToPose action client is used to send movement goals to the robot, either for exploration or for specific heat source targets. These navigation goals are based on the robot’s current position and orientation.
 
-2. Start the Nav2 stack:
+**Dependencies:**
 
-    ```bash
-    ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
-    ```
-
-3. Launch SLAM Toolbox for mapping:
-
-    ```bash
-    ros2 launch slam_toolbox online_async_launch.py
-    ```
-
-4. Launch RViz for visualization:
-
-    ```bash
-    ros2 launch nav2_bringup rviz_launch.py
-    ```
-
-5. Run the Explorer Node:
-
-    ```bash
-    ros2 run custom_explorer explorer
-    ```
+- **ROS2**: This node uses ROS2 for handling topics, actions, and messages (nav_msgs, geometry_msgs, std_msgs, etc.).
+- **RPi.GPIO**: For controlling the Raspberry Pi's GPIO pins to manage the firing mechanism.
+- **NumPy**: For handling thermal data as arrays.
+- **tf_transformations**: For converting quaternion-based orientation data to Euler angles (and vice versa).
 
 ---
 
-## How It Works
-
-1. **Map Subscription**: Subscribes to the `/map` topic to receive occupancy grid maps.
-2. **Frontier Detection**: Identifies free cells adjacent to unknown areas as frontiers.
-3. **Navigation**: Sends goals to Nav2's `NavigateToPose` action server for autonomous navigation to the closest frontier.
-4. **Dynamic Goal Selection**: Continuously updates and selects frontiers during exploration.
-
----
-
-## Code Structure
-
-- `explorer.py`: Main node for detecting frontiers and sending navigation goals.
-- `requirements.txt`: Python dependencies.
-- `README.md`: Project documentation.
-
----
-
-## Example Workflow
-
-1. **Start the TurtleBot3 simulation environment**.
-2. **Run the Explorer Node** as shown in the "Testing with TurtleBot3" section.
-3. **Visualize progress in RViz** as the robot autonomously explores the environment.
-
----
-
-## Future Improvements
-
-- Add support for multi-robot exploration.
-- Implement a more advanced frontier selection algorithm.
-- Optimize for larger environments.
-
----
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
----
+### The frontier based exploration is forked from a different repo. Credits to the original owner: [AniArka - Autonomous Explorer and Mapper Ros2 Nav2](https://github.com/AniArka/Autonomous-Explorer-and-Mapper-ros2-nav2)
 
 
-## Acknowledgments
 
-- [ROS 2 Documentation](https://docs.ros.org/en/rolling/index.html)
-- [Nav2](https://navigation.ros.org/)
-- [SLAM Toolbox](https://github.com/SteveMacenski/slam_toolbox)
-- [TurtleBot3](https://www.turtlebot.com/)
