@@ -1,5 +1,10 @@
 # Electrical
 
+## System Schematics
+![image](https://github.com/user-attachments/assets/760af142-5093-48ad-b26e-6e2310aad134)
+
+
+
 ## the onboard raspberry pi PCB
 - To facilitate better wiring and stability of electrical system, the pcb is designed with great help from Mr. Eugene.
 
